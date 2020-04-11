@@ -1,34 +1,37 @@
 class Timer {
-  constructor(durationInput, startBtn, pauseBtn, callbacks) {
+  constructor(durationInput, startBtn, stopBtn, callbacks) {
     this.durationInput = durationInput;
     this.startBtn = startBtn;
-    this.pauseBtn = pauseBtn;
+    this.stopBtn = stopBtn;
     if (callbacks) {
       this.onStart = callbacks.onStart;
       this.onTick = callbacks.onTick;
       this.onComplete = callbacks.onComplete;
+      this.changeBtns = callbacks.changeBtns;
     }
 
     this.startBtn.addEventListener("click", this.start);
-    this.pauseBtn.addEventListener("click", this.pause);
+    this.stopBtn.addEventListener("click", this.stop);
   }
 
   start = () => {
-    // Call tick as soon as start is ran so that we dont have a 1 second delay before the countdown begins
     if (this.onStart) {
       this.onStart(this.timeRemaining);
     }
+    // Call tick as soon as start is ran so that we dont have a 1 second delay before the countdown begins
     this.tick();
     this.interval = setInterval(this.tick, 50);
+    this.changeBtns(this.startBtn, this.stopBtn);
   };
 
-  pause = () => {
+  stop = () => {
     clearInterval(this.interval);
+    this.changeBtns(this.startBtn, this.stopBtn);
   };
 
   tick = () => {
     if (this.timeRemaining <= 0) {
-      this.pause();
+      this.stop();
       if (this.onComplete) {
         this.onComplete();
       }
@@ -48,4 +51,6 @@ class Timer {
     // toFixed to set the number of decimals inside the input
     this.durationInput.value = time.toFixed(2);
   }
+
+  //
 }
